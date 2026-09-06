@@ -66,6 +66,11 @@ class YOLOProductDetector:
     def _load_model(self):
         """Attempts to load the YOLO model; falls back gracefully if missing or during initial setup."""
         try:
+            import torch
+            try:
+                torch.set_num_threads(1)
+            except Exception:
+                pass
             from ultralytics import YOLO
             # If the specific model_path doesn't exist locally, fallback to 'yolov8n.pt' which auto-downloads
             target_path = self.model_path if os.path.exists(self.model_path) else "yolov8n.pt"
@@ -105,6 +110,7 @@ class YOLOProductDetector:
                     source=frame,
                     conf=confidence_threshold,
                     iou=nms_iou_threshold,
+                    imgsz=320,
                     verbose=False
                 )
 

@@ -1,7 +1,7 @@
 """
 Automated Live Deployment Verification Suite (Sections 11 - 20)
-Tests all features directly against the REAL PUBLIC HTTPS URL:
-https://participants-examinations-genre-isle.trycloudflare.com
+Tests all features directly against the REAL PERMANENT PUBLIC HTTPS URL:
+https://indoor-wellness-ai.onrender.com
 """
 
 import os
@@ -10,12 +10,24 @@ import time
 import requests
 import pytest
 
-LIVE_URL = os.environ.get("LIVE_DEPLOYMENT_URL", "https://participants-examinations-genre-isle.trycloudflare.com")
+LIVE_URL = os.environ.get("LIVE_DEPLOYMENT_URL", "https://indoor-wellness-ai.onrender.com")
+
+
+class TimeoutAdapter(requests.adapters.HTTPAdapter):
+    def __init__(self, timeout=60, *args, **kwargs):
+        self.timeout = timeout
+        super().__init__(*args, **kwargs)
+
+    def send(self, *args, **kwargs):
+        kwargs["timeout"] = kwargs.get("timeout", self.timeout)
+        return super().send(*args, **kwargs)
 
 
 @pytest.fixture(scope="session")
 def session():
     s = requests.Session()
+    s.mount("https://", TimeoutAdapter(timeout=60))
+    s.mount("http://", TimeoutAdapter(timeout=60))
     s.headers.update({"User-Agent": "IndoorWellnessAI-LiveValidator/1.0"})
     return s
 
