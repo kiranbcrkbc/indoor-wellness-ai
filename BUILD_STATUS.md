@@ -5,7 +5,9 @@
 **Project Name:** Indoor Wellness & Smart Shelf AI System  
 **Academic Reference:** Group 23, R R Institute of Technology, Dept. of CSE, Major Project Phase-1 (BCS685)  
 **Implementation Standard:** Production Software-Only, 100% Hardware Independent  
-**Current Status:** **COMPLETED & VERIFIED (38/38 Tests Passed - 100% Green)**  
+**Current Status:** **PRODUCTION RELEASED & LIVE VERIFIED (47/47 Tests Passed - 100% Green)**  
+**GitHub Repository:** [https://github.com/kiranbcrkbc/indoor-wellness-ai](https://github.com/kiranbcrkbc/indoor-wellness-ai) (PUBLIC)  
+**Live Public HTTPS URL:** [https://participants-examinations-genre-isle.trycloudflare.com](https://participants-examinations-genre-isle.trycloudflare.com)  
 **Last Updated:** 2026-09-06  
 
 ---
@@ -18,11 +20,12 @@
 | **Smart Shelf CV Pipeline** | YOLOv8n + OpenCV | **PASS (VERIFIED)** | Real-time object detection, shelf ROI polygon matching, stock classification (`AVAILABLE`, `LOW STOCK`, `EMPTY`), and canvas annotation. Latency: ~58 ms (CPU warmed). |
 | **Video Stream Analysis (FR-10)** | Frame sampling & temporal stats | **PASS (VERIFIED)** | Multi-format video ingestion (`.mp4`, `.avi`, `.mov`, `.webm`), temporal occupancy tracking across frames, and inventory auditing. |
 | **Indoor Wellness Environmental AI** | Simulation + ANN + Kalman | **PASS (VERIFIED)** | 5-scenario configurable time-series simulator, 1D Kalman noise filtering, EPA AQI calculation, ANN multi-horizon forecasting (+1h, +3h, +6h), and automated ventilation actuator control. |
-| **Database & Persistence** | SQLite (WAL mode) | **PASS (VERIFIED)** | `database/smartshelf.db` with tables for products, shelves, detection runs, detections, inventory, alerts, settings, and environmental readings. Persistent across restarts. |
+| **Database & Persistence** | SQLite (WAL mode) | **PASS (VERIFIED)** | `database/smartshelf.db` with persistent storage volume configuration for cloud deployment (`sqlite:////data/wellness.db`), WAL concurrency, and audit logs. |
 | **Backend REST API** | FastAPI + Uvicorn | **PASS (VERIFIED)** | Modular endpoints (`/api/shelves`, `/api/detect`, `/api/environmental`, `/api/alerts`, `/api/analytics`, `/api/settings`), Pydantic validation, CORS, and auto-generated OpenAPI docs. |
 | **Frontend Dashboard** | Glassmorphic Web App | **PASS (VERIFIED)** | Modern dark UI (`index.html`, `style.css`, `app.js`) with Chart.js time-series, live telemetry gauges, preset demo scenario triggers, offline vendor assets, and interactive alert management. |
-| **Automated Tests** | pytest suite | **PASS (38/38)** | 100% pass rate across stock logic, simulation, ML models, SQLite database, FastAPI endpoints, video uploads, alerts lifecycle, analytics export, recovery, and security checks. |
-| **Deployment & Reproducibility** | One-click local launch | **PASS (VERIFIED)** | `run.py` and `run.bat` launcher, `.gitignore`, seed script, evaluation script, and comprehensive `README.md`. |
+| **Automated Tests** | pytest suite | **PASS (47/47)** | 100% pass rate across stock logic, simulation, ML models, SQLite database, FastAPI endpoints, video uploads, alerts lifecycle, analytics export, recovery, and live HTTPS edge validation. |
+| **Public GitHub Repository** | Public git repo | **PASS (VERIFIED)** | Verified public repository under `kiranbcrkbc/indoor-wellness-ai`. Zero committed secrets, clean `.gitignore`, Dockerfile, and Render blueprint included. |
+| **Live HTTPS Deployment** | Public HTTPS deployment | **PASS (VERIFIED)** | Active at `https://participants-examinations-genre-isle.trycloudflare.com`. Fully tested live inference, video detection, simulated telemetry, and database persistence. |
 
 ---
 

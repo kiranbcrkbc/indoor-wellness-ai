@@ -3,11 +3,22 @@
 > **A Complete, End-to-End, Production Software-Only Artificial Intelligence Platform**  
 > *Combining Real-Time YOLOv8 Shelf Inventory Monitoring with Indoor Environmental Telemetry Simulation & ANN-Based Pollution Forecasting.*
 
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-HTTPS%20Active-brightgreen.svg)](https://participants-examinations-genre-isle.trycloudflare.com)
+[![GitHub Repo](https://img.shields.io/badge/GitHub-kiranbcrkbc%2Findoor--wellness--ai-blue.svg)](https://github.com/kiranbcrkbc/indoor-wellness-ai)
+[![Automated Tests](https://img.shields.io/badge/Tests-47%2F47%20Passing%20(100%25)-success.svg)](https://github.com/kiranbcrkbc/indoor-wellness-ai)
 [![Python](https://img.shields.io/badge/Python-3.11-blue.svg)](https://www.python.org/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.110+-009688.svg)](https://fastapi.tiangolo.com/)
 [![YOLOv8](https://img.shields.io/badge/Ultralytics-YOLOv8n-orange.svg)](https://docs.ultralytics.com/)
-[![SQLite](https://img.shields.io/badge/Database-SQLite%20WAL-003B57.svg)](https://www.sqlite.org/)
-[![Hardware](https://img.shields.io/badge/Hardware-100%25%20Software--Only-success.svg)](#critical-software-only-guarantee)
+[![SQLite](https://img.shields.io/badge/Database-SQLite%20WAL%20Persistent-003B57.svg)](https://www.sqlite.org/)
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/kiranbcrkbc/indoor-wellness-ai)
+
+---
+
+## 🌐 Live Production Links
+- **Live Public HTTPS Application:** [https://participants-examinations-genre-isle.trycloudflare.com](https://participants-examinations-genre-isle.trycloudflare.com)
+- **Live Swagger API Documentation:** [https://participants-examinations-genre-isle.trycloudflare.com/docs](https://participants-examinations-genre-isle.trycloudflare.com/docs)
+- **Public GitHub Repository:** [https://github.com/kiranbcrkbc/indoor-wellness-ai](https://github.com/kiranbcrkbc/indoor-wellness-ai)
+- **Author/GitHub Account:** [kiranbcrkbc](https://github.com/kiranbcrkbc) (kiranbcrkbc@gmail.com)
 
 ---
 
@@ -209,25 +220,53 @@ Run the full automated test suite using `pytest`:
 pytest tests/ -v
 ```
 
-Tests cover (38/38 passing):
-- Stock occupancy calculation, thresholds, and temporal smoothing (`tests/test_stock_logic.py`)
-- Environmental simulation scenarios and 1D Kalman noise filtering (`tests/test_simulation.py`)
-- EPA AQI breakpoints, ANN forecasting, and ventilation control (`tests/test_prediction.py`)
-- SQLite database models, relational integrity, and CRUD operations (`tests/test_database.py`)
-- FastAPI endpoints, response schemas, video uploads, alerts, and analytics (`tests/test_api.py`)
-- System integrity, WAL durability, CPU performance, secret check & E2E smoke tests (`tests/test_system_integrity.py`)
+Complete Test Suite (47/47 passing, 100% Green):
+- **Stock Occupancy & ROI Logic** (`tests/test_stock_logic.py`, 6 tests): Centroid intersection, threshold classification (`AVAILABLE`, `LOW STOCK`, `EMPTY`), temporal confirmation smoothing.
+- **Environmental Simulation & Kalman** (`tests/test_simulation.py`, 6 tests): Multi-scenario telemetry generation, 1D Kalman noise reduction, parameter bounds.
+- **EPA Breakpoints & ANN Prediction** (`tests/test_prediction.py`, 6 tests): Formula-accurate AQI calculation, MLP multi-horizon forecast (+1h, +3h, +6h), ventilation actuator logic.
+- **Database Relational Integrity** (`tests/test_database.py`, 6 tests): SQLAlchemy schema, shelf CRUD, audit logging, alert state transitions.
+- **FastAPI Endpoints & Integration** (`tests/test_api.py`, 7 tests): Static mount, health probe, image/video CV detection, CSV/JSON uploads, analytics export.
+- **System Integrity & Smoke Test** (`tests/test_system_integrity.py`, 7 tests): Recovery state validation, sub-100ms CPU latency benchmark, zero-secret git hygiene, full E2E smoke test.
+- **Live Deployment HTTPS Suite** (`tests/test_live_deployment.py`, 9 tests): Public HTTPS edge validation for UI, assets, health, live YOLO inference, multi-frame video, ANN forecasting, SQLite persistence, alerts, CSV export, and error resilience.
 
 ---
 
-## 8. GitHub Hygiene & Security
+## 8. Cloud Deployment & Database Persistence Architecture
 
-- **No Hard-coded Secrets:** No API keys, passwords, or tokens in source code.
-- **Clean `.gitignore`:** Excludes SQLite `.db` binaries, `.venv` virtual environments, large model weights (`*.pt`), caches, and temporary files.
+### Deployment Architecture
+The platform is containerized for seamless cloud deployment on modern container platforms (e.g., Render, Railway, Fly.io, AWS ECS):
+- **Container Runtime:** `python:3.11-slim` with system OpenCV libraries (`libgl1-mesa-glx`, `libglib2.0-0`).
+- **Web Application Gateway:** Uvicorn ASGI server running behind Cloudflare / reverse proxy.
+- **Zero-Hardware Guarantee:** Completely independent of physical IoT hardware or hardware accelerators; optimized for multi-threaded CPU inference.
+
+### Production SQLite Persistence Guarantee
+Standard ephemeral cloud containers wipe out local file systems upon redeployment or restart. To ensure **zero data loss**:
+- The application dynamically reads `DATABASE_URL` from the environment.
+- In production, it defaults to a dedicated persistent volume mount: `sqlite:////data/wellness.db`.
+- The database operates in **Write-Ahead Logging (WAL)** mode (`PRAGMA journal_mode=WAL;`), providing high-concurrency read/write throughput without table locks.
+- Render blueprint specification is provided in [`render.yaml`](file:///c:/Users/Lenovo/OneDrive/Desktop/INDOOR%20WELLNESS/render.yaml) with an explicit 1GB persistent disk mount at `/data`.
+
+### One-Click Deploy on Render
+Click the badge below or push to your connected Render account:
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/kiranbcrkbc/indoor-wellness-ai)
+
+Or run locally with Docker:
+```bash
+docker build -t indoor-wellness-ai .
+docker run -p 8000:8000 -v wellness-data:/data indoor-wellness-ai
+```
+
+---
+
+## 9. GitHub Hygiene & Security
+
+- **No Hard-coded Secrets:** Verified via automated regex scanning across all repository files. No API keys, passwords, or tokens in source code.
+- **Clean `.gitignore`:** Strictly excludes SQLite `.db` binaries, `.venv` virtual environments, large model weights (`*.pt`), caches, and temporary files.
 - **Reproducible Setup:** All dependencies pinned in `backend/requirements.txt`.
 
 ---
 
-## 9. Limitations & Future Enhancements
+## 10. Limitations & Future Enhancements
 
-- **Limitations:** Empty-shelf detection is relative to configured expected capacity and ROI boundaries. Real classification accuracy on retail goods depends on training images collected for specific packaging.
+- **Limitations:** Empty-shelf detection is relative to configured expected capacity and ROI boundaries. Real classification accuracy on retail goods depends on training images collected for specific packaging. Generic COCO models identify containers (bottles, cups, cans, boxes); specialized retail inventory can be fine-tuned via `scripts/train_model.py`.
 - **Future Enhancements:** Multi-camera synchronization, cloud synchronization via MQTT/WebSockets, edge deployment on low-power devices, automated re-ordering integration with retail ERP systems.
