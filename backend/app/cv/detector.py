@@ -67,11 +67,12 @@ class YOLOProductDetector:
         """Attempts to load the YOLO model; falls back gracefully if missing or during initial setup."""
         try:
             from ultralytics import YOLO
-            # If the weights file doesn't exist locally, Ultralytics auto-downloads yolov8n.pt
-            self.model = YOLO(self.model_path)
+            # If the specific model_path doesn't exist locally, fallback to 'yolov8n.pt' which auto-downloads
+            target_path = self.model_path if os.path.exists(self.model_path) else "yolov8n.pt"
+            self.model = YOLO(target_path)
             self.is_loaded = True
-            self.model_name = os.path.basename(self.model_path)
-            logger.info(f"Successfully loaded YOLO model: {self.model_path}")
+            self.model_name = os.path.basename(target_path)
+            logger.info(f"Successfully loaded YOLO model: {target_path}")
         except Exception as e:
             logger.warning(f"Could not load YOLO model from '{self.model_path}': {e}. Using resilient fallback.")
             self.model = None
