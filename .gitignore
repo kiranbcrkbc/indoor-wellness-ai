@@ -1,0 +1,62 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+venv/
+.venv/
+ENV/
+
+# Database
+*.db
+*.sqlite3
+*.db-wal
+*.db-shm
+database/uploads/*
+!database/uploads/.gitkeep
+!database/smartshelf.example.db
+
+# Environments & Secrets
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+
+# Model weights & Checkpoints
+*.pt
+*.onnx
+*.engine
+!models/pretrained/yolov8n.pt
+!models/pretrained/.gitkeep
+!models/custom/.gitkeep
+
+# Operating System & IDE
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Test & Coverage
+.coverage
+htmlcov/
+.pytest_cache/

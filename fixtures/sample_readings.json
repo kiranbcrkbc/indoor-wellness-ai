@@ -1,0 +1,26 @@
+{
+  "device_id": "indoor-software-telemetry-node-01",
+  "readings": [
+    {
+      "pm25": 14.5,
+      "co2": 520.0,
+      "voc": 95.0,
+      "temperature": 22.8,
+      "humidity": 48.5
+    },
+    {
+      "pm25": 38.2,
+      "co2": 890.0,
+      "voc": 240.0,
+      "temperature": 24.1,
+      "humidity": 52.0
+    },
+    {
+      "pm25": 115.0,
+      "co2": 1650.0,
+      "voc": 650.0,
+      "temperature": 26.5,
+      "humidity": 65.0
+    }
+  ]
+}

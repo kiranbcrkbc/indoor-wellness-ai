@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Indoor Wellness & Smart Shelf AI Platform</title>
+  <meta name="description" content="Production software-only platform combining YOLOv8 Smart Shelf computer vision with Indoor Wellness environmental AI and automated ventilation control.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Vendor Libraries (Local offline with CDN fallback) -->
+  <script src="/static/vendor/chart.umd.min.js"></script>
+  <script>window.Chart || document.write('<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"><\/script>')</script>
+  <script src="/static/vendor/feather.min.js"></script>
+  <script>window.feather || document.write('<script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"><\/script>')</script>
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body class="dark-theme">
+  <!-- Toast Notification Container -->
+  <div id="toast-container" class="toast-container" aria-live="polite"></div>
+
+  <div class="app-layout">
+    <!-- Left Navigation Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-brand">
+        <div class="brand-icon">
+          <i data-feather="cpu"></i>
+        </div>
+        <div class="brand-text">
+          <h2>INDOOR AI</h2>
+          <span class="badge badge-accent">SMART SHELF v1.0</span>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <a href="#overview" class="nav-item active" data-tab="overview">
+          <i data-feather="pie-chart"></i>
+          <span>Executive Overview</span>
+        </a>
+        <a href="#smart-shelf" class="nav-item" data-tab="smart-shelf">
+          <i data-feather="box"></i>
+          <span>Smart Shelf Vision</span>
+        </a>
+        <a href="#indoor-wellness" class="nav-item" data-tab="indoor-wellness">
+          <i data-feather="wind"></i>
+          <span>Indoor Wellness AI</span>
+        </a>
+        <a href="#shelves" class="nav-item" data-tab="shelves">
+          <i data-feather="layers"></i>
+          <span>Shelf Manager</span>
+        </a>
+        <a href="#alerts" class="nav-item" data-tab="alerts">
+          <i data-feather="bell"></i>
+          <span>Alert Center</span>
+          <span class="badge badge-danger alert-count-badge" id="sidebar-alert-badge">0</span>
+        </a>
+        <a href="#analytics" class="nav-item" data-tab="analytics">
+          <i data-feather="trending-up"></i>
+          <span>Analytics & Export</span>
+        </a>
+        <a href="#settings" class="nav-item" data-tab="settings">
+          <i data-feather="settings"></i>
+          <span>System & Model</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="system-status-indicator">
+          <div class="status-dot online"></div>
+          <div class="status-details">
+            <span class="status-label">Software-Only Engine</span>
+            <span class="status-sub">Zero Hardware Mode</span>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      <!-- Top Navigation Header -->
+      <header class="topbar">
+        <div class="header-left">
+          <h1 id="page-title">Executive Overview</h1>
+          <span class="breadcrumb" id="page-subtitle">Unified Operations Center</span>
+        </div>
+
+        <div class="header-right">
+          <div class="data-source-tag" id="active-source-pill">
+            <span class="pulse-indicator"></span>
+            <span id="source-name">DATA SOURCE: SOFTWARE SIMULATION</span>
+          </div>
+
+          <div class="topbar-chip">
+            <i data-feather="database"></i>
+            <span>SQLite WAL</span>
+          </div>
+
+          <div class="topbar-chip" id="model-status-chip">
+            <i data-feather="check-circle" class="text-emerald"></i>
+            <span id="topbar-model-name">YOLOv8n</span>
+          </div>
+
+          <button class="icon-btn" id="btn-quick-alerts" title="View Alerts">
+            <i data-feather="bell"></i>
+            <span class="badge-dot" id="header-alert-dot"></span>
+          </button>
+        </div>
+      </header>
+
+      <!-- Content Views -->
+      <div class="content-body">
+
+        <!-- ============================================================ -->
+        <!-- VIEW 1: EXECUTIVE OVERVIEW                                   -->
+        <!-- ============================================================ -->
+        <section id="view-overview" class="view-panel active">
+          <!-- KPI Summary Grid -->
+          <div class="kpi-grid">
+            <div class="kpi-card glass-card">
+              <div class="kpi-icon icon-blue">
+                <i data-feather="package"></i>
+              </div>
+              <div class="kpi-body">
+                <span class="kpi-title">Total Detections</span>
+                <h3 class="kpi-value" id="kpi-detections">0</h3>
+                <span class="kpi-sub"><span class="text-emerald">↑ Active</span> across all passes</span>
+              </div>
+            </div>
+
+            <div class="kpi-card glass-card">
+              <div class="kpi-icon icon-emerald">
+                <i data-feather="check-square"></i>
+              </div>
+              <div class="kpi-body">
+                <span class="kpi-title">Shelves Stocked</span>
+                <h3 class="kpi-value" id="kpi-stocked-shelves">0 / 0</h3>
+                <span class="kpi-sub" id="kpi-stock-pct">0% Full Capacity</span>
+              </div>
+            </div>
+
+            <div class="kpi-card glass-card">
+              <div class="kpi-icon icon-amber">
+                <i data-feather="alert-triangle"></i>
+              </div>
+              <div class="kpi-body">
+                <span class="kpi-title">Low Stock Racks</span>
+                <h3 class="kpi-value text-amber" id="kpi-low-stock">0</h3>
+                <span class="kpi-sub">Needs replenishment</span>
+              </div>
+            </div>
+
+            <div class="kpi-card glass-card">
+              <div class="kpi-icon icon-purple">
+                <i data-feather="activity"></i>
+              </div>
+              <div class="kpi-body">
+                <span class="kpi-title">Indoor Air Index</span>
+                <h3 class="kpi-value" id="kpi-aqi">28</h3>
+                <span class="kpi-sub" id="kpi-aqi-category"><span class="text-emerald">● Good</span> (ANN Forecast)</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quick Action Center -->
+          <div class="quick-action-strip glass-card">
+            <span class="strip-label"><i data-feather="zap"></i> Quick Academic Demonstration:</span>
+            <div class="button-group">
+              <button class="btn btn-primary" onclick="App.runPresetScenario('full')">
+                <i data-feather="check-circle"></i> Demo Full Shelf
+              </button>
+              <button class="btn btn-warning" onclick="App.runPresetScenario('low')">
+                <i data-feather="alert-circle"></i> Demo Low Stock
+              </button>
+              <button class="btn btn-danger" onclick="App.runPresetScenario('empty')">
+                <i data-feather="x-circle"></i> Demo Empty Shelf
+              </button>
+              <button class="btn btn-secondary" onclick="App.switchTab('indoor-wellness')">
+                <i data-feather="sliders"></i> Launch Environmental Sim
+              </button>
+            </div>
+          </div>
+
+          <!-- Dual Operations Showcase -->
+          <div class="dashboard-grid-2">
+            <!-- Shelf Overview Card -->
+            <div class="card glass-card">
+              <div class="card-header">
+                <div>
+                  <h3 class="card-title">Live Shelf Inventory Health</h3>
+                  <p class="card-sub">Current status of monitored camera ROIs</p>
+                </div>
+                <button class="btn btn-sm btn-outline" onclick="App.refreshShelves()">
+                  <i data-feather="refresh-cw"></i> Refresh
+                </button>
+              </div>
+              <div class="card-body">
+                <div class="shelf-status-list" id="overview-shelf-list">
+                  <div class="empty-state">Loading shelf telemetry...</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Indoor Air Quality Live Card -->
+            <div class="card glass-card">
+              <div class="card-header">
+                <div>
+                  <h3 class="card-title">Indoor Wellness AI Telemetry</h3>
+                  <p class="card-sub">Real-time simulation with Kalman filter & ventilation actuator</p>
+                </div>
+                <span class="badge badge-primary" id="overview-sim-scenario">Normal Indoor</span>
+              </div>
+              <div class="card-body">
+                <div class="air-quality-gauges">
+                  <div class="gauge-box">
+                    <span class="gauge-label">PM2.5 (Filtered)</span>
+                    <h4 class="gauge-val" id="overview-pm25">-- µg/m³</h4>
+                    <div class="progress-bar"><div class="progress-fill" id="bar-pm25" style="width: 20%;"></div></div>
+                  </div>
+                  <div class="gauge-box">
+                    <span class="gauge-label">CO2 Level</span>
+                    <h4 class="gauge-val" id="overview-co2">-- ppm</h4>
+                    <div class="progress-bar"><div class="progress-fill" id="bar-co2" style="width: 25%;"></div></div>
+                  </div>
+                  <div class="gauge-box">
+                    <span class="gauge-label">Total VOCs</span>
+                    <h4 class="gauge-val" id="overview-voc">-- ppb</h4>
+                    <div class="progress-bar"><div class="progress-fill" id="bar-voc" style="width: 15%;"></div></div>
+                  </div>
+                  <div class="gauge-box">
+                    <span class="gauge-label">Ventilation Status</span>
+                    <h4 class="gauge-val text-emerald" id="overview-vent-status">STANDBY</h4>
+                    <span class="sub-text" id="overview-fan-power">Fan Power: 10%</span>
+                  </div>
+                </div>
+
+                <div class="chart-container-sm mt-3">
+                  <canvas id="overviewMiniChart"></canvas>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ============================================================ -->
+        <!-- VIEW 2: SMART SHELF COMPUTER VISION SUITE                     -->
+        <!-- ============================================================ -->
+        <section id="view-smart-shelf" class="view-panel">
+          <div class="cv-layout">
+            <!-- Left: Viewport & Input Modes -->
+            <div class="cv-viewport-column">
+              <div class="glass-card viewport-card">
+                <div class="viewport-header">
+                  <div class="tab-pills">
+                    <button class="tab-pill active" data-subtab="demo-subtab">
+                      <i data-feather="play"></i> Presets
+                    </button>
+                    <button class="tab-pill" data-subtab="upload-subtab">
+                      <i data-feather="upload"></i> Image Upload
+                    </button>
+                    <button class="tab-pill" data-subtab="video-subtab">
+                      <i data-feather="film"></i> Video Upload
+                    </button>
+                    <button class="tab-pill" data-subtab="camera-subtab">
+                      <i data-feather="video"></i> Webcam
+                    </button>
+                  </div>
+                  <div class="meta-tag" id="cv-processing-latency">Latency: -- ms</div>
+                </div>
+
+                <!-- Sub-tab 1: Preset Demonstrations -->
+                <div id="demo-subtab" class="subtab-content active">
+                  <div class="preset-banner">
+                    <span>Select an academic demonstration scenario to evaluate YOLOv8 detection and threshold logic:</span>
+                    <div class="btn-cluster">
+                      <button class="btn btn-outline-success" onclick="App.runPresetScenario('full')">
+                        <i data-feather="check-circle"></i> Full Shelf
+                      </button>
+                      <button class="btn btn-outline-warning" onclick="App.runPresetScenario('low')">
+                        <i data-feather="alert-triangle"></i> Low Stock
+                      </button>
+                      <button class="btn btn-outline-danger" onclick="App.runPresetScenario('empty')">
+                        <i data-feather="x-circle"></i> Empty Shelf
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Sub-tab 2: Custom Image Upload -->
+                <div id="upload-subtab" class="subtab-content">
+                  <div class="drop-zone" id="image-drop-zone">
+                    <i data-feather="image" class="drop-icon"></i>
+                    <p>Drag and drop a shelf image here, or <label class="file-browse-link">browse files<input type="file" id="image-file-input" accept="image/*" hidden></label></p>
+                    <span class="file-hint">Supports JPG, PNG, WebP (Max 15MB)</span>
+                  </div>
+                </div>
+
+                <!-- Sub-tab 3: Video File Upload (FR-10) -->
+                <div id="video-subtab" class="subtab-content">
+                  <div class="drop-zone" id="video-drop-zone">
+                    <i data-feather="film" class="drop-icon"></i>
+                    <p>Drag and drop a shelf video here, or <label class="file-browse-link">browse files<input type="file" id="video-file-input" accept="video/mp4,video/avi,video/quicktime,video/webm" hidden></label></p>
+                    <span class="file-hint">Supports MP4, AVI, MOV, WebM (Samples frames & tracks temporal occupancy)</span>
+                  </div>
+                </div>
+
+                <!-- Sub-tab 4: Webcam Stream -->
+                <div id="camera-subtab" class="subtab-content">
+                  <div class="camera-control-box">
+                    <p>Stream live video from an attached USB webcam. Optional hardware enhancement.</p>
+                    <div class="btn-cluster">
+                      <button class="btn btn-primary" id="btn-start-webcam" onclick="App.startWebcam()">
+                        <i data-feather="video"></i> Check / Start Webcam
+                      </button>
+                    </div>
+                    <div id="webcam-status-alert" class="alert-box alert-info mt-2">
+                      <i data-feather="info"></i> If no webcam is connected, test with Presets or Image Upload above.
+                    </div>
+                  </div>
+                </div>
+
+                <!-- The Interactive Canvas / Image Display -->
+                <div class="canvas-wrapper" id="canvas-wrapper">
+                  <img id="annotated-result-img" alt="YOLO Detection Overlay" class="detection-image" style="display: none;">
+                  <div class="canvas-placeholder" id="canvas-placeholder">
+                    <i data-feather="eye" class="placeholder-icon"></i>
+                    <h4>Detection Viewport Ready</h4>
+                    <p>Run a preset scenario above or upload a shelf image to view bounding boxes and shelf ROIs.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Right: Detection Intelligence & Metrics -->
+            <div class="cv-metrics-column">
+              <!-- Shelf Status Cards -->
+              <div class="card glass-card">
+                <div class="card-header">
+                  <h3 class="card-title">Shelf Region Classification</h3>
+                  <span class="badge badge-accent">FR-05 Threshold Logic</span>
+                </div>
+                <div class="card-body">
+                  <div id="cv-shelf-status-cards" class="shelf-results-list">
+                    <p class="text-muted">Awaiting detection run...</p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Class Distribution Card -->
+              <div class="card glass-card">
+                <div class="card-header">
+                  <h3 class="card-title">Detected Products (FR-03)</h3>
+                  <span class="badge badge-outline" id="cv-total-detections-badge">0 items</span>
+                </div>
+                <div class="card-body">
+                  <div id="cv-class-counts-container" class="class-counts-grid">
+                    <p class="text-muted">No detections yet.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ============================================================ -->
+        <!-- VIEW 3: INDOOR WELLNESS ENVIRONMENTAL AI SUITE                -->
+        <!-- ============================================================ -->
+        <section id="view-indoor-wellness" class="view-panel">
+          <div class="env-layout">
+            <!-- Top: Simulation Controls -->
+            <div class="glass-card env-control-card">
+              <div class="env-control-header">
+                <div class="header-titles">
+                  <h3>Software Simulation Control Deck</h3>
+                  <span class="text-muted">Simulates multi-pollutant environmental telemetry without physical sensors</span>
+                </div>
+                <div class="scenario-selector-group">
+                  <label for="sim-scenario-select">Active Scenario:</label>
+                  <select id="sim-scenario-select" class="form-select" onchange="App.changeScenario(this.value)">
+                    <option value="Normal Indoor">Normal Indoor (Good Air)</option>
+                    <option value="Moderate Pollution">Moderate Pollution (Elevated VOC)</option>
+                    <option value="Hazardous Event">Hazardous Event (Heavy Smoke)</option>
+                    <option value="Sudden Spike">Sudden Spike (Rapid Event & Recovery)</option>
+                    <option value="Improving Air Quality">Improving Air Quality (Decay Curve)</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="env-actions-bar">
+                <div class="btn-cluster">
+                  <button class="btn btn-primary" id="btn-toggle-sim" onclick="App.toggleSimulation()">
+                    <i data-feather="pause"></i> Pause Simulation
+                  </button>
+                  <button class="btn btn-secondary" onclick="App.stepSimulation()">
+                    <i data-feather="skip-forward"></i> Single Step
+                  </button>
+                  <button class="btn btn-outline" onclick="App.openManualInputModal()">
+                    <i data-feather="edit-3"></i> Manual Input Form
+                  </button>
+                  <button class="btn btn-outline" onclick="App.openFileUploadModal()">
+                    <i data-feather="file-text"></i> Import CSV / JSON
+                  </button>
+                </div>
+                <div class="interval-controller">
+                  <span>Tick Interval: 2.0s</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Environmental Telemetry & Neural Network Forecast -->
+            <div class="dashboard-grid-2">
+              <!-- Telemetry Charts (Raw vs Kalman Filtered) -->
+              <div class="card glass-card">
+                <div class="card-header">
+                  <div>
+                    <h3 class="card-title">Telemetry & Kalman Filter (Noise Reduction)</h3>
+                    <p class="card-sub">PM2.5 (µg/m³) and CO2 (ppm) real-time trajectory</p>
+                  </div>
+                  <span class="badge badge-primary">Kalman 1D Active</span>
+                </div>
+                <div class="card-body">
+                  <div class="chart-container-md">
+                    <canvas id="telemetryChart"></canvas>
+                  </div>
+                </div>
+              </div>
+
+              <!-- ANN Multi-Horizon Forecast Chart -->
+              <div class="card glass-card">
+                <div class="card-header">
+                  <div>
+                    <h3 class="card-title">Artificial Neural Network (ANN) Forecast</h3>
+                    <p class="card-sub">Predictive AQI model forecasting +1h, +3h, and +6h trends</p>
+                  </div>
+                  <span class="badge badge-accent">ANN Multilayer Perceptron</span>
+                </div>
+                <div class="card-body">
+                  <div class="chart-container-md">
+                    <canvas id="forecastChart"></canvas>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Automated Ventilation Actuator State -->
+            <div class="glass-card actuator-card">
+              <div class="actuator-header">
+                <div class="actuator-titles">
+                  <i data-feather="wind" class="actuator-icon"></i>
+                  <div>
+                    <h4>Automated Ventilation & Air Purifier Control</h4>
+                    <p>Autonomous HVAC actuation recommendations based on indoor air standards</p>
+                  </div>
+                </div>
+                <div class="actuator-status-pill" id="actuator-status-pill">
+                  VENTILATION STANDBY
+                </div>
+              </div>
+              <div class="actuator-grid">
+                <div class="actuator-metric">
+                  <span class="m-label">Calculated EPA AQI</span>
+                  <h3 class="m-val" id="actuator-aqi-val">28.4</h3>
+                  <span class="m-sub text-emerald" id="actuator-aqi-cat">Good</span>
+                </div>
+                <div class="actuator-metric">
+                  <span class="m-label">Primary Driver</span>
+                  <h3 class="m-val" id="actuator-primary-pollutant">PM2.5</h3>
+                  <span class="m-sub">Dominant Factor</span>
+                </div>
+                <div class="actuator-metric">
+                  <span class="m-label">Fan Power Command</span>
+                  <h3 class="m-val" id="actuator-fan-val">10%</h3>
+                  <span class="m-sub">Variable Frequency Drive</span>
+                </div>
+                <div class="actuator-metric">
+                  <span class="m-label">HEPA Filtration Mode</span>
+                  <h3 class="m-val" id="actuator-filter-mode">ECO</h3>
+                  <span class="m-sub">Normal Flow</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ============================================================ -->
+        <!-- VIEW 4: SHELF MANAGER                                         -->
+        <!-- ============================================================ -->
+        <section id="view-shelves" class="view-panel">
+          <div class="card glass-card">
+            <div class="card-header">
+              <div>
+                <h3 class="card-title">Shelf Region of Interest (ROI) Configurations</h3>
+                <p class="card-sub">Manage shelf bounding boxes, capacities, and stock warning thresholds</p>
+              </div>
+              <button class="btn btn-primary btn-sm" onclick="App.openAddShelfModal()">
+                <i data-feather="plus"></i> Add New Shelf ROI
+              </button>
+            </div>
+            <div class="card-body">
+              <div class="table-responsive">
+                <table class="data-table" id="shelves-table">
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>Shelf Name</th>
+                      <th>ROI Box (px)</th>
+                      <th>Capacity</th>
+                      <th>Low Stock Thresh</th>
+                      <th>Empty Thresh</th>
+                      <th>Status</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="shelves-table-body">
+                    <tr><td colspan="8" class="text-center">Loading shelves...</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ============================================================ -->
+        <!-- VIEW 5: ALERT CENTER                                          -->
+        <!-- ============================================================ -->
+        <section id="view-alerts" class="view-panel">
+          <div class="card glass-card">
+            <div class="card-header">
+              <div>
+                <h3 class="card-title">Alert & Incident Log</h3>
+                <p class="card-sub">Automated notifications for low stock, empty racks, and hazardous air spikes</p>
+              </div>
+              <button class="btn btn-outline btn-sm" onclick="App.resolveAllAlerts()">
+                <i data-feather="check-all"></i> Mark All Resolved
+              </button>
+            </div>
+            <div class="card-body">
+              <div class="alerts-filter-bar">
+                <button class="btn-filter active" data-filter="all">All Alerts</button>
+                <button class="btn-filter" data-filter="CRITICAL">Critical</button>
+                <button class="btn-filter" data-filter="WARNING">Warnings</button>
+                <button class="btn-filter" data-filter="resolved">Resolved</button>
+              </div>
+              <div class="alerts-list-group" id="alerts-list-group">
+                <div class="empty-state">No alerts recorded yet.</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ============================================================ -->
+        <!-- VIEW 6: ANALYTICS & EXPORT                                    -->
+        <!-- ============================================================ -->
+        <section id="view-analytics" class="view-panel">
+          <div class="analytics-layout">
+            <div class="glass-card export-bar">
+              <div class="export-text">
+                <h4>Historical Auditing & Data Export</h4>
+                <p>Download full detection history and shelf status transitions as CSV</p>
+              </div>
+              <a href="/api/analytics/export" class="btn btn-primary" download>
+                <i data-feather="download"></i> Download Audit Log (CSV)
+              </a>
+            </div>
+
+            <div class="dashboard-grid-2">
+              <div class="card glass-card">
+                <div class="card-header">
+                  <h3 class="card-title">Shelf Occupancy Distribution</h3>
+                  <span class="badge badge-primary">Current %</span>
+                </div>
+                <div class="card-body">
+                  <div class="chart-container-md">
+                    <canvas id="shelfOccupancyBarChart"></canvas>
+                  </div>
+                </div>
+              </div>
+
+              <div class="card glass-card">
+                <div class="card-header">
+                  <h3 class="card-title">Product Class Frequency</h3>
+                  <span class="badge badge-accent">YOLO Class Log</span>
+                </div>
+                <div class="card-body">
+                  <div class="chart-container-md">
+                    <canvas id="productClassDonutChart"></canvas>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ============================================================ -->
+        <!-- VIEW 7: SYSTEM & MODEL SETTINGS                               -->
+        <!-- ============================================================ -->
+        <section id="view-settings" class="view-panel">
+          <div class="dashboard-grid-2">
+            <!-- Model Information Card -->
+            <div class="card glass-card">
+              <div class="card-header">
+                <div>
+                  <h3 class="card-title">Active AI Model Metadata (FR-17)</h3>
+                  <p class="card-sub">Computer Vision model architecture and evaluation figures</p>
+                </div>
+                <span class="badge badge-accent" id="settings-model-badge">YOLOv8n</span>
+              </div>
+              <div class="card-body">
+                <div class="model-info-list" id="model-info-details">
+                  <div class="info-row"><span class="k">Architecture:</span><span class="v" id="mi-arch">Ultralytics YOLOv8 Nano</span></div>
+                  <div class="info-row"><span class="k">Weights Path:</span><span class="v code-text" id="mi-path">models/pretrained/yolov8n.pt</span></div>
+                  <div class="info-row"><span class="k">Inference Device:</span><span class="v" id="mi-device">CPU (Intel / AMD Optimized)</span></div>
+                  <div class="info-row"><span class="k">Resolution:</span><span class="v" id="mi-res">640x640</span></div>
+                  <div class="info-row"><span class="k">Average Latency:</span><span class="v" id="mi-latency">~40 ms</span></div>
+                  <div class="info-row"><span class="k">Evaluation Status:</span><span class="v text-emerald" id="mi-eval">Measured on held-out test split</span></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- System Threshold Settings Form -->
+            <div class="card glass-card">
+              <div class="card-header">
+                <div>
+                  <h3 class="card-title">System Thresholds & Parameters (FR-16)</h3>
+                  <p class="card-sub">Tunable parameters applied across all analysis pipelines</p>
+                </div>
+              </div>
+              <div class="card-body">
+                <form id="settings-form" onsubmit="App.saveSettings(event)">
+                  <div class="form-group">
+                    <label>YOLO Confidence Threshold (0.1 - 0.9):</label>
+                    <div class="slider-row">
+                      <input type="range" id="conf-threshold-slider" min="0.1" max="0.9" step="0.05" value="0.45" oninput="document.getElementById('conf-val').innerText = this.value">
+                      <span id="conf-val" class="slider-val">0.45</span>
+                    </div>
+                  </div>
+
+                  <div class="form-group">
+                    <label>Low Stock Threshold (Fraction of Capacity):</label>
+                    <div class="slider-row">
+                      <input type="range" id="low-threshold-slider" min="0.1" max="0.6" step="0.05" value="0.35" oninput="document.getElementById('low-val').innerText = this.value">
+                      <span id="low-val" class="slider-val">0.35</span>
+                    </div>
+                  </div>
+
+                  <div class="form-group">
+                    <label>Empty Shelf Threshold (Fraction of Capacity):</label>
+                    <div class="slider-row">
+                      <input type="range" id="empty-threshold-slider" min="0.0" max="0.2" step="0.01" value="0.05" oninput="document.getElementById('empty-val').innerText = this.value">
+                      <span id="empty-val" class="slider-val">0.05</span>
+                    </div>
+                  </div>
+
+                  <div class="form-group">
+                    <label>Hazardous AQI Alert Limit:</label>
+                    <div class="slider-row">
+                      <input type="range" id="aqi-threshold-slider" min="50" max="300" step="10" value="150" oninput="document.getElementById('aqi-val').innerText = this.value">
+                      <span id="aqi-val" class="slider-val">150</span>
+                    </div>
+                  </div>
+
+                  <button type="submit" class="btn btn-primary mt-2">
+                    <i data-feather="save"></i> Save System Settings
+                  </button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- Modal: Manual Environmental Input -->
+  <div class="modal-backdrop" id="modal-manual-input">
+    <div class="modal-dialog glass-card">
+      <div class="modal-header">
+        <h3>Manual Environmental Software Input</h3>
+        <button class="close-btn" onclick="App.closeModals()">&times;</button>
+      </div>
+      <form onsubmit="App.submitManualEnvironmental(event)">
+        <div class="modal-body">
+          <div class="form-group">
+            <label>PM2.5 Concentration (µg/m³):</label>
+            <input type="number" id="m-pm25" step="0.1" min="0" max="1000" value="25.0" class="form-input" required>
+          </div>
+          <div class="form-group">
+            <label>CO2 Concentration (ppm):</label>
+            <input type="number" id="m-co2" step="1" min="300" max="5000" value="650" class="form-input" required>
+          </div>
+          <div class="form-group">
+            <label>Total VOCs (ppb):</label>
+            <input type="number" id="m-voc" step="1" min="0" max="2000" value="120" class="form-input" required>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Temperature (°C):</label>
+              <input type="number" id="m-temp" step="0.1" value="23.5" class="form-input" required>
+            </div>
+            <div class="form-group">
+              <label>Humidity (%):</label>
+              <input type="number" id="m-hum" step="0.1" value="50.0" class="form-input" required>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" onclick="App.closeModals()">Cancel</button>
+          <button type="submit" class="btn btn-primary">Submit Telemetry</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: CSV / JSON Upload -->
+  <div class="modal-backdrop" id="modal-file-upload">
+    <div class="modal-dialog glass-card">
+      <div class="modal-header">
+        <h3>Import Environmental Dataset</h3>
+        <button class="close-btn" onclick="App.closeModals()">&times;</button>
+      </div>
+      <form onsubmit="App.submitFileEnvironmental(event)">
+        <div class="modal-body">
+          <p class="text-muted mb-2">Upload a CSV or JSON file containing environmental readings (PM2.5, CO2, VOC, Temp, Humidity):</p>
+          <input type="file" id="env-file-input" accept=".csv, .json" class="form-input" required>
+          <div class="sample-file-tip mt-2">
+            <span>Sample fixtures available in <code>fixtures/sample_environmental_data.csv</code></span>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" onclick="App.closeModals()">Cancel</button>
+          <button type="submit" class="btn btn-primary">Upload & Process</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Add Shelf -->
+  <div class="modal-backdrop" id="modal-add-shelf">
+    <div class="modal-dialog glass-card">
+      <div class="modal-header">
+        <h3>Add New Shelf ROI</h3>
+        <button class="close-btn" onclick="App.closeModals()">&times;</button>
+      </div>
+      <form onsubmit="App.submitNewShelf(event)">
+        <div class="modal-body">
+          <div class="form-group">
+            <label>Shelf Name / Label:</label>
+            <input type="text" id="add-shelf-name" class="form-input" placeholder="e.g. Shelf 3 - Middle Rack" required>
+          </div>
+          <div class="form-group">
+            <label>Expected Capacity (Items):</label>
+            <input type="number" id="add-shelf-capacity" class="form-input" value="8" min="1" required>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Top-Left [X, Y]:</label>
+              <input type="text" id="add-shelf-tl" class="form-input" value="60, 220" required>
+            </div>
+            <div class="form-group">
+              <label>Bottom-Right [X, Y]:</label>
+              <input type="text" id="add-shelf-br" class="form-input" value="740, 360" required>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" onclick="App.closeModals()">Cancel</button>
+          <button type="submit" class="btn btn-primary">Create Shelf</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="/static/js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,13 @@
+{
+  "confidence_threshold": 0.45,
+  "nms_iou_threshold": 0.45,
+  "active_model_path": "models/pretrained/yolov8n.pt",
+  "empty_threshold": 0.05,
+  "low_stock_threshold": 0.35,
+  "temporal_confirmation_frames": 3,
+  "aqi_hazardous_threshold": 150.0,
+  "aqi_unhealthy_threshold": 100.0,
+  "aqi_moderate_threshold": 50.0,
+  "simulation_interval_seconds": 2,
+  "active_simulation_scenario": "Normal Indoor"
+}
